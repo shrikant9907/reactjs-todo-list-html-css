@@ -25,6 +25,12 @@ const TodoListApp = () => {
     } 
   }
 
+  const resetTaskData = () => {
+    setTaskTitle("");
+    setListTasks([]);
+    localStorage.removeItem('listTasks');
+  }
+
   // For first time load, It will take the values from the localstorage.
   useEffect(() => {
     const localStorageData = localStorage.getItem('listTasks');
@@ -38,7 +44,7 @@ const TodoListApp = () => {
      <div className='todo-list-app'>
         <header className="todo-list-header">
           <h1 className='todo-list-heading'>Todo List</h1>
-          <button className="reset-todo-list-button">Reset</button>
+          <button onClick={() => resetTaskData()} className="reset-todo-list-button">Reset</button>
         </header>
         <div className="todo-list-body">
           <TodoListForm
