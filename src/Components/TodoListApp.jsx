@@ -20,12 +20,11 @@ const TodoListApp = () => {
     e.preventDefault();
 
     // if Editing the task
-    if (editTask) {
+    if (editTask && taskTitle !== "") {
       // Find and Replace the item title by id
       const listItems = listTasks.slice();
       const taskIndex = listItems.findIndex((task) => task.id === editTask.id);
       if (taskIndex > -1) {
-        console.log('edit_test', taskIndex, taskTitle)
         listItems[taskIndex] = {...editTask, title: taskTitle}
         setListTasks(listItems)
         localStorage.setItem('listTasks', JSON.stringify(listItems))
@@ -57,6 +56,11 @@ const TodoListApp = () => {
     setTaskTitle(task.title);
   }
 
+  const handleOnCancelEdit = () => {
+    setEditTask(null)
+    setTaskTitle("");
+  }
+
   const resetTaskData = () => {
     setTaskTitle("");
     setListTasks([]);
@@ -76,13 +80,17 @@ const TodoListApp = () => {
       <div className='todo-list-app'>
         <header className="todo-list-header">
           <h1 className='todo-list-heading'>Todo List</h1>
-          <button onClick={() => resetTaskData()} className="reset-todo-list-button">Reset</button>
+          {listTasks && listTasks.length > 0 && 
+            <button onClick={() => resetTaskData()} className="reset-todo-list-button">Reset</button>
+          }
         </header>
         <div className="todo-list-body">
           <TodoListForm
             value={taskTitle}
             handleOnInputChange={(e) => handleOnTaskTitleChange(e)}
             handleOnSubmit={(e) => handleOnTaskSubmit(e)}
+            editTask = {editTask}
+            handleOnCancelEdit ={() => handleOnCancelEdit()}
           />
           {
             listTasks && listTasks.length > 0 ? <MyTasks handleOnEdit={(task) => handleOnEditTask(task)} handleOnDelete={(task) => handleOnDeleteTask(task)} tasks={listTasks} /> : <EmptyTasksCard />}
