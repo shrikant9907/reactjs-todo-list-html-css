@@ -25,13 +25,13 @@ const TodoListApp = () => {
       const listItems = listTasks.slice();
       const taskIndex = listItems.findIndex((task) => task.id === editTask.id);
       if (taskIndex > -1) {
-        listItems[taskIndex] = {...editTask, title: taskTitle}
+        listItems[taskIndex] = { ...editTask, title: taskTitle }
         setListTasks(listItems)
         localStorage.setItem('listTasks', JSON.stringify(listItems))
         setEditTask(null)
         setTaskTitle("")
       }
-      return 
+      return
     }
 
     // Find in the JSON string if the title name already exists. 
@@ -54,6 +54,19 @@ const TodoListApp = () => {
   const handleOnEditTask = (task) => {
     setEditTask(task)
     setTaskTitle(task.title);
+  }
+
+  const handleOnMarkComplete = (task) => {
+    // Find and Replace the item title by id
+    const listItems = listTasks.slice();
+    const taskIndex = listItems.findIndex((listTask) => listTask.id === task.id);
+    if (taskIndex > -1) {
+      listItems[taskIndex] = { ...task, status: "completed" }
+      setListTasks(listItems)
+      localStorage.setItem('listTasks', JSON.stringify(listItems))
+      setEditTask(null)
+      setTaskTitle("")
+    }
   }
 
   const handleOnCancelEdit = () => {
@@ -80,7 +93,7 @@ const TodoListApp = () => {
       <div className='todo-list-app'>
         <header className="todo-list-header">
           <h1 className='todo-list-heading'>Todo List</h1>
-          {listTasks && listTasks.length > 0 && 
+          {listTasks && listTasks.length > 0 &&
             <button onClick={() => resetTaskData()} className="reset-todo-list-button">Reset</button>
           }
         </header>
@@ -89,11 +102,20 @@ const TodoListApp = () => {
             value={taskTitle}
             handleOnInputChange={(e) => handleOnTaskTitleChange(e)}
             handleOnSubmit={(e) => handleOnTaskSubmit(e)}
-            editTask = {editTask}
-            handleOnCancelEdit ={() => handleOnCancelEdit()}
+            editTask={editTask}
+            handleOnCancelEdit={() => handleOnCancelEdit()}
           />
           {
-            listTasks && listTasks.length > 0 ? <MyTasks handleOnEdit={(task) => handleOnEditTask(task)} handleOnDelete={(task) => handleOnDeleteTask(task)} tasks={listTasks} /> : <EmptyTasksCard />}
+            listTasks && listTasks.length > 0
+              ?
+              <MyTasks
+                handleMarkComplete={(task) => handleOnMarkComplete(task)}
+                handleOnEdit={(task) => handleOnEditTask(task)}
+                handleOnDelete={(task) => handleOnDeleteTask(task)}
+                tasks={listTasks}
+              />
+              :
+              <EmptyTasksCard />}
 
 
         </div>
