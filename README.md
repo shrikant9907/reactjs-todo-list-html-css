@@ -14,3 +14,8 @@ This is a simple Todo List App built using React js. It will give an basic idea 
 
 ## Learn More
 - Create a Todo Listing in using Material UI and Typescript: https://github.com/shrikant9907/reactjs-todo-list-material-ui 
+
+## Created By 
+Shrikant Yadav
+Full Stack Web Developer
+Linkedin: https://www.linkedin.com/in/shrikantdev/ 
