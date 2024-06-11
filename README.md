@@ -3,7 +3,7 @@
 This is a simple Todo List App built using React js. It will give an basic idea about creating reusable components for an application.
 
 ## Feature 
-- Add / Edit / Archive / Delete Todo list tasks
+- Add / Edit / Cancel Edit / Delete Todo list tasks
 - Reset Todo List
 - Filter Todo List
 - Reusable components
