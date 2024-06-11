@@ -3,11 +3,13 @@ import EmptyTasksCard from "./EmptyTasksCard";
 import MyTasks from "./MyTasks";
 import TodoListForm from "./TodoListForm";
 import "./TodoListStyle.css"
+import { v4 as uuidv4 } from 'uuid';
 
 const TodoListApp = () => {
 
   const [listTasks, setListTasks] = useState([]);
   const [taskTitle, setTaskTitle] = useState("");
+  const [editTask, setEditTask] = useState(null);
 
   const handleOnTaskTitleChange = (e) => {
     const { value } = e.target;
@@ -16,13 +18,43 @@ const TodoListApp = () => {
 
   const handleOnTaskSubmit = (e) => {
     e.preventDefault();
- 
-    if (!listTasks.includes(taskTitle) && taskTitle !== "") {
-      const newList = [...listTasks, taskTitle];
+
+    // if Editing the task
+    if (editTask) {
+      // Find and Replace the item title by id
+      const listItems = listTasks.slice();
+      const taskIndex = listItems.findIndex((task) => task.id === editTask.id);
+      if (taskIndex > -1) {
+        console.log('edit_test', taskIndex, taskTitle)
+        listItems[taskIndex] = {...editTask, title: taskTitle}
+        setListTasks(listItems)
+        localStorage.setItem('listTasks', JSON.stringify(listItems))
+        setEditTask(null)
+        setTaskTitle("")
+      }
+      return 
+    }
+
+    // Find in the JSON string if the title name already exists. 
+    // Duplicate task not allowed
+    if (!editTask && !JSON.stringify(listTasks).includes(taskTitle) && taskTitle !== "") {
+      const uuid = uuidv4();
+      const newList = [...listTasks, { title: taskTitle, id: uuid }];
       setListTasks(newList);
-      localStorage.setItem('listTasks', JSON.stringify(newList))  
+      localStorage.setItem('listTasks', JSON.stringify(newList))
       setTaskTitle("")
-    } 
+    }
+  }
+
+  const handleOnDeleteTask = (task) => {
+    const filteredTasks = listTasks.filter((taskObj) => taskObj.id !== task.id)
+    setListTasks(filteredTasks);
+    localStorage.setItem('listTasks', JSON.stringify(filteredTasks))
+  }
+
+  const handleOnEditTask = (task) => {
+    setEditTask(task)
+    setTaskTitle(task.title);
   }
 
   const resetTaskData = () => {
@@ -37,11 +69,11 @@ const TodoListApp = () => {
     if (localStorageData) {
       setListTasks(JSON.parse(localStorageData));
     }
-  }, []) 
-  
+  }, [])
+
   return (
     <>
-     <div className='todo-list-app'>
+      <div className='todo-list-app'>
         <header className="todo-list-header">
           <h1 className='todo-list-heading'>Todo List</h1>
           <button onClick={() => resetTaskData()} className="reset-todo-list-button">Reset</button>
@@ -51,16 +83,16 @@ const TodoListApp = () => {
             value={taskTitle}
             handleOnInputChange={(e) => handleOnTaskTitleChange(e)}
             handleOnSubmit={(e) => handleOnTaskSubmit(e)}
-           />
+          />
           {
-          listTasks && listTasks.length > 0 ? <MyTasks tasks={listTasks} /> : <EmptyTasksCard />} 
-          
-           
+            listTasks && listTasks.length > 0 ? <MyTasks handleOnEdit={(task) => handleOnEditTask(task)} handleOnDelete={(task) => handleOnDeleteTask(task)} tasks={listTasks} /> : <EmptyTasksCard />}
+
+
         </div>
         <footer className="todo-list-footer">
           <p>Created By Shrikant Yadav</p>
         </footer>
-     </div>
+      </div>
     </>
   )
 }
